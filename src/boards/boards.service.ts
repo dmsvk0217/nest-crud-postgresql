@@ -11,8 +11,19 @@ export class BoardsService {
     return this.boards;
   }
 
-  getBoardById(id: string) {
-    return this.boards.find((board) => board.id == id);
+  getBoardById(id: string): Board {
+    return this.boards.find((board) => board.id === id);
+  }
+
+  updateBoardStatus(id: string, status: BoardStatus): Board {
+    const board = this.getBoardById(id);
+    board.status = status;
+
+    return board;
+  }
+
+  deleteBoardById(id: string): void {
+    this.boards = this.boards.filter((board) => board.id !== id);
   }
 
   createBoard(createBoardDto: CreateBoardDTO): Board {
