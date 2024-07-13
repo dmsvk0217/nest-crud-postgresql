@@ -3,6 +3,7 @@ import { CreateBoardDTO } from './dto/create-board.dto';
 import { BoardRepository } from './board.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from './board.entity';
+import { DeleteResult } from 'typeorm';
 import { BoardStatus } from './board-status.enum';
 
 @Injectable()
@@ -22,16 +23,29 @@ export class BoardsService {
     return found;
   }
 
-  async createBoard(createBoardDTO: CreateBoardDTO): Promise<Board> {
-    const { title, description } = createBoardDTO;
-    const board = this.boardRepository.create({
-      title,
-      description,
-      status: BoardStatus.PUBLIC,
-    });
+  async getAllBoards(): Promise<Board[]> {
+    const boards = await this.boardRepository.find();
+    return boards;
+  }
+
+  createBoard(createBoardDTO: CreateBoardDTO): Promise<Board> {
+    return this.boardRepository.createBoard(createBoardDTO);
+  }
+
+  async updateBoard(id: number, status: BoardStatus): Promise<Board> {
+    const board = await this.getBoardById(id);
+
+    board.status = status;
 
     await this.boardRepository.save(board);
 
     return board;
+  }
+
+  async deleteBoardById(id: number): Promise<void> {
+    const result: DeleteResult = await this.boardRepository.delete({ id });
+    if (result.affected === 0) {
+      throw new NotFoundException(`Can't find Board with id ${id}`);
+    }
   }
 }
