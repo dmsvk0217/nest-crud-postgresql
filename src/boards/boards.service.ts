@@ -28,8 +28,8 @@ export class BoardsService {
     return boards;
   }
 
-  createBoard(createBoardDTO: CreateBoardDTO): Promise<Board> {
-    return this.boardRepository.createBoard(createBoardDTO);
+  async createBoard(createBoardDTO: CreateBoardDTO): Promise<Board> {
+    return await this.boardRepository.createBoard(createBoardDTO);
   }
 
   async updateBoard(id: number, status: BoardStatus): Promise<Board> {
