@@ -11,23 +11,34 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
+  signIn(user: any): { accessToken: string } {
+    const payload = { username: user.username, sub: user.userId };
+    return {
+      accessToken: this.jwtService.sign(payload),
+    };
+  }
+
   async signUp(authCredentialDto: AuthCredentialDto): Promise<void> {
     return await this.userRepository.createUser(authCredentialDto);
   }
 
-  async signIn(
-    authCredentialDto: AuthCredentialDto,
-  ): Promise<{ accessToken: string }> {
-    const { username, password } = authCredentialDto;
+  async validateUser(authCredentialDto: AuthCredentialDto): Promise<any> {
+    const { username, password: plainTestPassword } = authCredentialDto;
     const user = await this.userRepository.findOneBy({ username });
-    const pwValidResult = await bcrypt.compare(password, user.password);
-
-    if (!user || !pwValidResult) {
-      throw new UnauthorizedException('logIn failed');
+    if (!user) {
+      throw new UnauthorizedException('logIn failed: user not found');
     }
 
-    const payload = { username: user.username };
-    const accessToken = await this.jwtService.signAsync(payload);
-    return { accessToken };
+    const pwValidResult = await bcrypt.compare(
+      plainTestPassword,
+      user.password,
+    );
+
+    if (!pwValidResult) {
+      throw new UnauthorizedException('logIn failed: incorrect password');
+    }
+
+    const { password, ...result } = user;
+    return result;
   }
 }

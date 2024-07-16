@@ -10,6 +10,7 @@ import {
 import { AuthService } from './auth.service';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
 import { AuthGuard } from './auth.guard';
+import { LocalAuthGuard } from './auth.local-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -22,17 +23,17 @@ export class AuthController {
     return this.authService.signUp(authCredentialDto);
   }
 
+  @UseGuards(LocalAuthGuard)
   @Post('/signin')
-  singIn(
-    @Body(ValidationPipe) authCredentialDto: AuthCredentialDto,
-  ): Promise<{ accessToken: string }> {
+  singIn(@Body(ValidationPipe) authCredentialDto: AuthCredentialDto): {
+    accessToken: string;
+  } {
     return this.authService.signIn(authCredentialDto);
   }
 
   @UseGuards(AuthGuard)
   @Get('/profile')
   getProfile(@Req() req: any) {
-    console.log('🚀 ~ AuthController ~ getProfile ~ req:', req);
     return req.user;
   }
 }
