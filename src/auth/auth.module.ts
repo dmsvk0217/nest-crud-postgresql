@@ -6,7 +6,8 @@ import { UserRepository } from './user.repository';
 import { JwtModule } from '@nestjs/jwt';
 import * as config from 'config';
 import { PassportModule } from '@nestjs/passport';
-import { LocalStrategy } from './auth.local.strategy';
+import { LocalStrategy } from './local.strategy';
+import { JwtStrategy } from './jwt.strategy';
 
 const jwtConfig = config.get('jwt');
 
@@ -21,6 +22,6 @@ const jwtConfig = config.get('jwt');
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, UserRepository, LocalStrategy],
+  providers: [AuthService, UserRepository, LocalStrategy, JwtStrategy],
 })
 export class AuthModule {}
