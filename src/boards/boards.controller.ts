@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Req,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -32,8 +33,12 @@ export class BoardsController {
 
   @Post('/')
   @UsePipes(ValidationPipe)
-  createBoard(@Body() createBoardDTO: CreateBoardDTO): Promise<Board> {
-    return this.boardsService.createBoard(createBoardDTO);
+  createBoard(
+    @Req() req: any,
+    @Body() createBoardDTO: CreateBoardDTO,
+  ): Promise<Board> {
+    const user = req.user;
+    return this.boardsService.createBoard(createBoardDTO, user);
   }
 
   @Patch('/:id/status')
