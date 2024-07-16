@@ -18,6 +18,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('/signup')
+  @Public()
   signUp(
     @Body(ValidationPipe) authCredentialDto: AuthCredentialDto,
   ): Promise<void> {
@@ -25,6 +26,7 @@ export class AuthController {
   }
 
   @UseGuards(LocalAuthGuard)
+  @Public()
   @Post('/signin')
   singIn(@Body(ValidationPipe) authCredentialDto: AuthCredentialDto): {
     accessToken: string;
@@ -42,6 +44,6 @@ export class AuthController {
   @Public()
   @Get('/profile/public')
   getProfilePublic(@Req() req: any) {
-    return req.user;
+    return 'public Profile';
   }
 }
