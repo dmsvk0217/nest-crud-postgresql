@@ -12,6 +12,7 @@ import { AuthCredentialDto } from './dto/auth-credential.dto';
 import { LocalAuthGuard } from './local-auth.guard';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { Public } from 'src/decorators/public.decorator';
+import { User } from 'src/decorators/user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -36,8 +37,8 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('/profile')
-  getProfile(@Req() req: any) {
-    return req.user;
+  getProfile(@User() user) {
+    return user;
   }
 
   @UseGuards(JwtAuthGuard)
